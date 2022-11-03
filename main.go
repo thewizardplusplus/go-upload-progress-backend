@@ -10,6 +10,8 @@ func main() {
 		switch r.Method {
 		case http.MethodGet:
 			GetFilesHandler(w, r)
+		case http.MethodPost:
+			SaveFileHandler(w, r)
 		default:
 			http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 		}
