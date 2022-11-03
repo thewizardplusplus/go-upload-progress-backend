@@ -6,6 +6,16 @@ import (
 )
 
 func main() {
+	http.HandleFunc("/api/v1/files", func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case http.MethodGet:
+			GetFilesHandler(w, r)
+		default:
+			http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
+		}
+	})
+
+	http.Handle("/files/", http.StripPrefix("/files/", http.FileServer(http.Dir("./files"))))
 	http.Handle("/", http.FileServer(http.Dir("./public")))
 
 	if err := http.ListenAndServe(":8080", nil); err != nil {
