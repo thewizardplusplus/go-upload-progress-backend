@@ -1,13 +1,17 @@
 package main
 
 import (
+	"encoding/hex"
 	"io"
 	"math/rand"
 	"net/http"
 	"os"
 	"path/filepath"
-	"strconv"
 	"strings"
+)
+
+const (
+	randomSuffixByteCount = 4
 )
 
 func SaveFileHandler(w http.ResponseWriter, r *http.Request) {
@@ -58,10 +62,14 @@ func GenerateFilename(baseDir string, originalFilename string) (string, error) {
 			break
 		}
 
+		randomSuffixBytes := make([]byte, randomSuffixByteCount)
+		if _, err := rand.Read(randomSuffixBytes); err != nil {
+			return "", err
+		}
+
 		extension := filepath.Ext(generatedFilename)
-		randomSuffix := strconv.Itoa(rand.Int())
 		generatedFilename = strings.TrimSuffix(generatedFilename, extension) +
-			randomSuffix +
+			hex.EncodeToString(randomSuffixBytes) +
 			extension
 	}
 
