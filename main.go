@@ -12,6 +12,8 @@ func main() {
 			GetFilesHandler(w, r)
 		case http.MethodPost:
 			SaveFileHandler(w, r)
+		case http.MethodDelete:
+			DeleteFileHandler(w, r)
 		default:
 			http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 		}
