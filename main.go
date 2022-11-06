@@ -13,7 +13,11 @@ func main() {
 		case http.MethodPost:
 			SaveFileHandler(w, r)
 		case http.MethodDelete:
-			DeleteFileHandler(w, r)
+			if filename := r.FormValue("filename"); filename != "" {
+				DeleteFileHandler(w, r)
+			} else {
+				DeleteFilesHandler(w, r)
+			}
 		default:
 			http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 		}
