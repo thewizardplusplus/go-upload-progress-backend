@@ -3,13 +3,16 @@ package main
 import (
 	"log"
 	"net/http"
+
+	"github.com/thewizardplusplus/go-upload-progress/gateways/handlers"
 )
 
 func main() {
 	http.HandleFunc("/api/v1/files", func(w http.ResponseWriter, r *http.Request) {
+		var fileHandler handlers.FileHandler
 		switch r.Method {
 		case http.MethodGet:
-			GetFilesHandler(w, r)
+			fileHandler.GetFiles(w, r)
 		case http.MethodPost:
 			SaveFileHandler(w, r)
 		case http.MethodDelete:

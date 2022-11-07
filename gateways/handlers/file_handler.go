@@ -1,4 +1,4 @@
-package main
+package handlers
 
 import (
 	"encoding/json"
@@ -9,7 +9,9 @@ import (
 	"github.com/thewizardplusplus/go-upload-progress/entities"
 )
 
-func GetFilesHandler(w http.ResponseWriter, r *http.Request) {
+type FileHandler struct{}
+
+func (h FileHandler) GetFiles(w http.ResponseWriter, r *http.Request) {
 	files, err := os.ReadDir("./files")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
