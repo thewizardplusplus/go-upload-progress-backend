@@ -3,13 +3,20 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/thewizardplusplus/go-upload-progress/gateways/handlers"
+	"github.com/thewizardplusplus/go-upload-progress/usecases"
 )
 
 func main() {
 	http.HandleFunc("/api/v1/files", func(w http.ResponseWriter, r *http.Request) {
-		var fileHandler handlers.FileHandler
+		fileHandler := handlers.FileHandler{
+			FileUsecase: usecases.FileUsecase{
+				FS: os.DirFS("./files"),
+			},
+		}
+
 		switch r.Method {
 		case http.MethodGet:
 			fileHandler.GetFiles(w, r)
