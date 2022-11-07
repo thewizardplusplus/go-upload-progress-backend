@@ -2,26 +2,12 @@ package main
 
 import (
 	"encoding/json"
-	"io/fs"
 	"net/http"
 	"os"
 	"sort"
-	"time"
+
+	"github.com/thewizardplusplus/go-upload-progress/entities"
 )
-
-type FileInfo struct {
-	Name    string
-	Size    int64
-	ModTime time.Time
-}
-
-func NewFileInfo(fileInfo fs.FileInfo) FileInfo {
-	return FileInfo{
-		Name:    fileInfo.Name(),
-		Size:    fileInfo.Size(),
-		ModTime: fileInfo.ModTime(),
-	}
-}
 
 func GetFilesHandler(w http.ResponseWriter, r *http.Request) {
 	files, err := os.ReadDir("./files")
@@ -30,7 +16,7 @@ func GetFilesHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fileInfos := make([]FileInfo, 0, len(files))
+	fileInfos := make([]entities.FileInfo, 0, len(files))
 	for _, file := range files {
 		if file.IsDir() {
 			continue
@@ -42,7 +28,7 @@ func GetFilesHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		fileInfos = append(fileInfos, NewFileInfo(fileInfo))
+		fileInfos = append(fileInfos, entities.NewFileInfo(fileInfo))
 	}
 
 	sort.Slice(fileInfos, func(i int, j int) bool {
