@@ -27,7 +27,7 @@ func main() {
 			if filename := r.FormValue("filename"); filename != "" {
 				fileHandler.DeleteFile(w, r)
 			} else {
-				DeleteFilesHandler(w, r)
+				fileHandler.DeleteFiles(w, r)
 			}
 		default:
 			http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
