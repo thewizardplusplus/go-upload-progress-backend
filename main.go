@@ -25,7 +25,7 @@ func main() {
 			fileHandler.SaveFile(w, r)
 		case http.MethodDelete:
 			if filename := r.FormValue("filename"); filename != "" {
-				DeleteFileHandler(w, r)
+				fileHandler.DeleteFile(w, r)
 			} else {
 				DeleteFilesHandler(w, r)
 			}

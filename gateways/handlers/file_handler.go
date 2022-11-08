@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
+	"os"
+	"path/filepath"
 
 	"github.com/thewizardplusplus/go-upload-progress/entities"
 )
@@ -48,4 +50,20 @@ func (h FileHandler) SaveFile(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusCreated)
+}
+
+func (h FileHandler) DeleteFile(w http.ResponseWriter, r *http.Request) {
+	filename := r.FormValue("filename")
+	if filename == "" {
+		http.Error(w, "filename is required", http.StatusBadRequest)
+		return
+	}
+
+	fullFilename := filepath.Join("./files", filename)
+	if err := os.Remove(fullFilename); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
 }
