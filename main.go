@@ -3,9 +3,9 @@ package main
 import (
 	"log"
 	"net/http"
-	"os"
 
 	"github.com/thewizardplusplus/go-upload-progress-backend/gateways/handlers"
+	writablefs "github.com/thewizardplusplus/go-upload-progress-backend/gateways/writable-fs"
 	"github.com/thewizardplusplus/go-upload-progress-backend/usecases"
 )
 
@@ -13,8 +13,7 @@ func main() {
 	http.HandleFunc("/api/v1/files", func(w http.ResponseWriter, r *http.Request) {
 		fileHandler := handlers.FileHandler{
 			FileUsecase: usecases.FileUsecase{
-				FileDir: "./files",
-				FS:      os.DirFS("./files"),
+				WritableFS: writablefs.NewWritableFS("./files"),
 			},
 		}
 
