@@ -5,21 +5,27 @@ import (
 	"encoding/hex"
 	"io"
 	"io/fs"
-	"os"
 	"path/filepath"
 	"sort"
 	"strings"
 
 	"github.com/thewizardplusplus/go-upload-progress/entities"
+	"github.com/thewizardplusplus/go-upload-progress/gateways/writablefs"
 )
 
 const (
 	randomSuffixByteCount = 4
 )
 
+type WritableFS interface {
+	fs.FS
+
+	Create(filename string) (writablefs.WritableFile, error)
+	Remove(filename string) error
+}
+
 type FileUsecase struct {
-	FileDir string
-	FS      fs.FS
+	WritableFS WritableFS
 }
 
 func (u FileUsecase) GetFiles() ([]entities.FileInfo, error) {
@@ -51,7 +57,7 @@ func (u FileUsecase) SaveFile(file io.Reader, filename string) error {
 		return err
 	}
 
-	savedFile, err := os.Create(filepath.Join(u.FileDir, uniqueFilename))
+	savedFile, err := u.WritableFS.Create(uniqueFilename)
 	if err != nil {
 		return err
 	}
@@ -65,7 +71,7 @@ func (u FileUsecase) SaveFile(file io.Reader, filename string) error {
 }
 
 func (u FileUsecase) DeleteFile(filename string) error {
-	return os.Remove(filepath.Join(u.FileDir, filename))
+	return u.WritableFS.Remove(filename)
 }
 
 func (u FileUsecase) DeleteFiles() error {
@@ -84,7 +90,7 @@ func (u FileUsecase) DeleteFiles() error {
 }
 
 func (u FileUsecase) readDirFiles() ([]fs.DirEntry, error) {
-	dirEntries, err := fs.ReadDir(u.FS, ".")
+	dirEntries, err := fs.ReadDir(u.WritableFS, ".")
 	if err != nil {
 		return nil, err
 	}
