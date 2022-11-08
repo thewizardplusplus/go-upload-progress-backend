@@ -68,6 +68,10 @@ func (u FileUsecase) SaveFile(file io.Reader, filename string) error {
 	return nil
 }
 
+func (u FileUsecase) DeleteFile(filename string) error {
+	return os.Remove(filepath.Join(u.FileDir, filename))
+}
+
 func (u FileUsecase) getUniqueFilename(filename string) (string, error) {
 	files, err := fs.ReadDir(u.FS, ".")
 	if err != nil {
