@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
+	"os"
+	"path/filepath"
 
 	"github.com/thewizardplusplus/go-upload-progress/entities"
 )
@@ -61,6 +63,28 @@ func (h FileHandler) DeleteFile(w http.ResponseWriter, r *http.Request) {
 	if err := h.FileUsecase.DeleteFile(filename); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
+}
+
+func (h FileHandler) DeleteFiles(w http.ResponseWriter, r *http.Request) {
+	files, err := os.ReadDir("./files")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	for _, file := range files {
+		if file.IsDir() {
+			continue
+		}
+
+		fullFilename := filepath.Join("./files", file.Name())
+		if err := os.Remove(fullFilename); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 	}
 
 	w.WriteHeader(http.StatusNoContent)
