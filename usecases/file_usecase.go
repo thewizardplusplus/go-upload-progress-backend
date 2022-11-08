@@ -116,7 +116,7 @@ func (u FileUsecase) makeUniqueFilename(filename string) (string, error) {
 			break
 		}
 
-		uniqueFilename, err = makeRandomFilename(uniqueFilename)
+		uniqueFilename, err = makeRandomFilename(filename)
 		if err != nil {
 			return "", err
 		}
