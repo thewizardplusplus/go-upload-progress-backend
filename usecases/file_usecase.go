@@ -72,6 +72,25 @@ func (u FileUsecase) DeleteFile(filename string) error {
 	return os.Remove(filepath.Join(u.FileDir, filename))
 }
 
+func (u FileUsecase) DeleteFiles() error {
+	files, err := fs.ReadDir(u.FS, ".")
+	if err != nil {
+		return err
+	}
+
+	for _, file := range files {
+		if file.IsDir() {
+			continue
+		}
+
+		if err := u.DeleteFile(file.Name()); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (u FileUsecase) getUniqueFilename(filename string) (string, error) {
 	files, err := fs.ReadDir(u.FS, ".")
 	if err != nil {
