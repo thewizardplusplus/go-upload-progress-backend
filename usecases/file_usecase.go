@@ -23,17 +23,13 @@ type FileUsecase struct {
 }
 
 func (u FileUsecase) GetFiles() ([]entities.FileInfo, error) {
-	files, err := fs.ReadDir(u.FS, ".")
+	files, err := u.readDirFiles()
 	if err != nil {
 		return nil, err
 	}
 
 	fileInfos := make([]entities.FileInfo, 0, len(files))
 	for _, file := range files {
-		if file.IsDir() {
-			continue
-		}
-
 		fileInfo, err := file.Info()
 		if err != nil {
 			return nil, err
@@ -73,16 +69,12 @@ func (u FileUsecase) DeleteFile(filename string) error {
 }
 
 func (u FileUsecase) DeleteFiles() error {
-	files, err := fs.ReadDir(u.FS, ".")
+	files, err := u.readDirFiles()
 	if err != nil {
 		return err
 	}
 
 	for _, file := range files {
-		if file.IsDir() {
-			continue
-		}
-
 		if err := u.DeleteFile(file.Name()); err != nil {
 			return err
 		}
@@ -91,17 +83,31 @@ func (u FileUsecase) DeleteFiles() error {
 	return nil
 }
 
+func (u FileUsecase) readDirFiles() ([]fs.DirEntry, error) {
+	dirEntries, err := fs.ReadDir(u.FS, ".")
+	if err != nil {
+		return nil, err
+	}
+
+	files := make([]fs.DirEntry, 0, len(dirEntries))
+	for _, dirEntry := range dirEntries {
+		if !dirEntry.IsDir() {
+			files = append(files, dirEntry)
+		}
+	}
+
+	return files, nil
+}
+
 func (u FileUsecase) getUniqueFilename(filename string) (string, error) {
-	files, err := fs.ReadDir(u.FS, ".")
+	files, err := u.readDirFiles()
 	if err != nil {
 		return "", err
 	}
 
 	filenameSet := make(map[string]struct{})
 	for _, file := range files {
-		if !file.IsDir() {
-			filenameSet[file.Name()] = struct{}{}
-		}
+		filenameSet[file.Name()] = struct{}{}
 	}
 
 	uniqueFilename := filename
