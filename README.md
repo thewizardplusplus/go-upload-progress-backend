@@ -1,5 +1,6 @@
 # go-upload-progress-backend
 
+[![GoDoc](https://godoc.org/github.com/thewizardplusplus/go-upload-progress-backend?status.svg)](https://godoc.org/github.com/thewizardplusplus/go-upload-progress-backend)
 [![Go Report Card](https://goreportcard.com/badge/github.com/thewizardplusplus/go-upload-progress-backend)](https://goreportcard.com/report/github.com/thewizardplusplus/go-upload-progress-backend)
 
 Back-end of the service that implements a simple file manager with a display of file upload progress.
