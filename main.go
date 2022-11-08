@@ -2,7 +2,9 @@ package main
 
 import (
 	"log"
+	"math/rand"
 	"net/http"
+	"time"
 
 	"github.com/thewizardplusplus/go-upload-progress/gateways/handlers"
 	"github.com/thewizardplusplus/go-upload-progress/gateways/writablefs"
@@ -10,6 +12,8 @@ import (
 )
 
 func main() {
+	rand.Seed(time.Now().UnixNano())
+
 	http.HandleFunc("/api/v1/files", func(w http.ResponseWriter, r *http.Request) {
 		fileHandler := handlers.FileHandler{
 			FileUsecase: usecases.FileUsecase{

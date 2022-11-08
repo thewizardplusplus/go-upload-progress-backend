@@ -1,10 +1,10 @@
 package usecases
 
 import (
-	"crypto/rand"
 	"encoding/hex"
 	"io"
 	"io/fs"
+	"math/rand"
 	"path/filepath"
 	"sort"
 	"strings"
