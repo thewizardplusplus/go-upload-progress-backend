@@ -19,6 +19,24 @@ type FileHandler struct {
 	FileUsecase FileUsecase
 }
 
+func (h FileHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodGet:
+		h.GetFiles(w, r)
+	case http.MethodPost:
+		h.SaveFile(w, r)
+	case http.MethodDelete:
+		if filename := r.FormValue("filename"); filename != "" {
+			h.DeleteFile(w, r)
+		} else {
+			h.DeleteFiles(w, r)
+		}
+	default:
+		errStatus := http.StatusMethodNotAllowed
+		http.Error(w, http.StatusText(errStatus), errStatus)
+	}
+}
+
 func (h FileHandler) GetFiles(w http.ResponseWriter, r *http.Request) {
 	fileInfos, err := h.FileUsecase.GetFiles()
 	if err != nil {
