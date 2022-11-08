@@ -1,14 +1,25 @@
 package usecases
 
 import (
+	"crypto/rand"
+	"encoding/hex"
+	"io"
 	"io/fs"
+	"os"
+	"path/filepath"
 	"sort"
+	"strings"
 
 	"github.com/thewizardplusplus/go-upload-progress/entities"
 )
 
+const (
+	randomSuffixByteCount = 4
+)
+
 type FileUsecase struct {
-	FS fs.FS
+	FileDir string
+	FS      fs.FS
 }
 
 func (u FileUsecase) GetFiles() ([]entities.FileInfo, error) {
@@ -36,4 +47,56 @@ func (u FileUsecase) GetFiles() ([]entities.FileInfo, error) {
 	})
 
 	return fileInfos, nil
+}
+
+func (u FileUsecase) SaveFile(file io.Reader, filename string) error {
+	uniqueFilename, err := u.getUniqueFilename(filename)
+	if err != nil {
+		return err
+	}
+
+	savedFile, err := os.Create(filepath.Join(u.FileDir, uniqueFilename))
+	if err != nil {
+		return err
+	}
+	defer savedFile.Close()
+
+	if _, err := io.Copy(savedFile, file); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (u FileUsecase) getUniqueFilename(filename string) (string, error) {
+	files, err := fs.ReadDir(u.FS, ".")
+	if err != nil {
+		return "", err
+	}
+
+	filenameSet := make(map[string]struct{})
+	for _, file := range files {
+		if !file.IsDir() {
+			filenameSet[file.Name()] = struct{}{}
+		}
+	}
+
+	uniqueFilename := filename
+	for {
+		if _, exists := filenameSet[uniqueFilename]; !exists {
+			break
+		}
+
+		randomSuffixBytes := make([]byte, randomSuffixByteCount)
+		if _, err := rand.Read(randomSuffixBytes); err != nil {
+			return "", err
+		}
+
+		extension := filepath.Ext(uniqueFilename)
+		uniqueFilename = strings.TrimSuffix(uniqueFilename, extension) +
+			hex.EncodeToString(randomSuffixBytes) +
+			extension
+	}
+
+	return uniqueFilename, nil
 }

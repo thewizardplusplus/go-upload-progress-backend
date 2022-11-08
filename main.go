@@ -13,7 +13,8 @@ func main() {
 	http.HandleFunc("/api/v1/files", func(w http.ResponseWriter, r *http.Request) {
 		fileHandler := handlers.FileHandler{
 			FileUsecase: usecases.FileUsecase{
-				FS: os.DirFS("./files"),
+				FileDir: "./files",
+				FS:      os.DirFS("./files"),
 			},
 		}
 
