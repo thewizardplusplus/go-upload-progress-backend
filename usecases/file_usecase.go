@@ -46,7 +46,7 @@ func (u FileUsecase) GetFiles() ([]entities.FileInfo, error) {
 }
 
 func (u FileUsecase) SaveFile(file io.Reader, filename string) error {
-	uniqueFilename, err := u.getUniqueFilename(filename)
+	uniqueFilename, err := u.makeUniqueFilename(filename)
 	if err != nil {
 		return err
 	}
@@ -99,7 +99,7 @@ func (u FileUsecase) readDirFiles() ([]fs.DirEntry, error) {
 	return files, nil
 }
 
-func (u FileUsecase) getUniqueFilename(filename string) (string, error) {
+func (u FileUsecase) makeUniqueFilename(filename string) (string, error) {
 	files, err := u.readDirFiles()
 	if err != nil {
 		return "", err
@@ -116,16 +116,24 @@ func (u FileUsecase) getUniqueFilename(filename string) (string, error) {
 			break
 		}
 
-		randomSuffixBytes := make([]byte, randomSuffixByteCount)
-		if _, err := rand.Read(randomSuffixBytes); err != nil {
+		uniqueFilename, err = makeRandomFilename(uniqueFilename)
+		if err != nil {
 			return "", err
 		}
-
-		extension := filepath.Ext(uniqueFilename)
-		uniqueFilename = strings.TrimSuffix(uniqueFilename, extension) +
-			hex.EncodeToString(randomSuffixBytes) +
-			extension
 	}
 
 	return uniqueFilename, nil
+}
+
+func makeRandomFilename(filename string) (string, error) {
+	randomSuffixBytes := make([]byte, randomSuffixByteCount)
+	if _, err := rand.Read(randomSuffixBytes); err != nil {
+		return "", err
+	}
+
+	extension := filepath.Ext(filename)
+	randomFilename := strings.TrimSuffix(filename, extension) +
+		hex.EncodeToString(randomSuffixBytes) +
+		extension
+	return randomFilename, nil
 }
