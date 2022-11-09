@@ -1,5 +1,20 @@
 # Change Log
 
+## [v1.2.0](https://github.com/thewizardplusplus/go-upload-progress-backend/tree/v1.2.0) (2022-11-10)
+
+Implement logging.
+
+- Implement logging:
+  - Implement error logging in the `gateways/handlers.FileHandler` structure
+  - Add the `gateways/handlers/middlewares` package:
+    - Add the `middlewares.ApplyMiddlewares()` function
+    - Add the `middlewares.LoggingMiddleware()` function
+    - Add the `middlewares.RecoveringMiddleware()` function
+    - Use the middlewares in the main code
+- Perform refactoring:
+  - Add the `main.makeLogger()` function
+  - Add the `main.makeFileServer()` function
+
 ## [v1.1.0](https://github.com/thewizardplusplus/go-upload-progress-backend/tree/v1.1.0) (2022-11-08)
 
 Perform refactoring and improve unique filename generating.
