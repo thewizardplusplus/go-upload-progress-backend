@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"math/rand"
 	"net/http"
@@ -13,11 +14,16 @@ import (
 	"github.com/thewizardplusplus/go-upload-progress/usecases"
 )
 
+const (
+	uploadedFileRoute = "/files/"
+	loggerFlags       = log.Ldate | log.Ltime | log.Lmicroseconds | log.Lmsgprefix
+)
+
 func main() {
 	rand.Seed(time.Now().UnixNano())
 
-	errorLogger := log.New(os.Stderr, "[ERROR] ", log.Ldate|log.Ltime|log.Lmicroseconds|log.Lmsgprefix)
-	infoLogger := log.New(os.Stderr, "[INFO] ", log.Ldate|log.Ltime|log.Lmicroseconds|log.Lmsgprefix)
+	infoLogger := makeLogger("INFO")
+	errorLogger := makeLogger("ERROR")
 
 	mux := http.NewServeMux()
 	mux.Handle("/api/v1/files", handlers.FileHandler{
@@ -26,8 +32,8 @@ func main() {
 		},
 		Logger: errorLogger,
 	})
-	mux.Handle("/files/", http.StripPrefix("/files/", http.FileServer(http.Dir("./files"))))
-	mux.Handle("/", http.FileServer(http.Dir("./public")))
+	mux.Handle(uploadedFileRoute, http.StripPrefix(uploadedFileRoute, makeFileServer("./files")))
+	mux.Handle("/", makeFileServer("./public"))
 
 	wrappedMux := middlewares.ApplyMiddlewares(mux, []middlewares.Middleware{
 		middlewares.LoggingMiddleware(infoLogger),
@@ -37,4 +43,12 @@ func main() {
 	if err := http.ListenAndServe(":8080", wrappedMux); err != nil {
 		errorLogger.Fatal(err)
 	}
+}
+
+func makeLogger(prefix string) *log.Logger {
+	return log.New(os.Stderr, fmt.Sprintf("[%s] ", prefix), loggerFlags)
+}
+
+func makeFileServer(baseDir string) http.Handler {
+	return http.FileServer(http.Dir(baseDir))
 }
