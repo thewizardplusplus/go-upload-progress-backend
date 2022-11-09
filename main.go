@@ -22,27 +22,43 @@ const (
 func main() {
 	rand.Seed(time.Now().UnixNano())
 
+	serverAddress := getEnv("SERVER_ADDRESS", ":8080")
+	publicFileDir := getEnv("PUBLIC_FILE_DIR", "./public")
+	uploadedFileDir := getEnv("UPLOADED_FILE_DIR", "./files")
+
 	infoLogger := makeLogger("INFO")
 	errorLogger := makeLogger("ERROR")
 
 	mux := http.NewServeMux()
 	mux.Handle("/api/v1/files", handlers.FileHandler{
 		FileUsecase: usecases.FileUsecase{
-			WritableFS: writablefs.NewWritableFS("./files"),
+			WritableFS: writablefs.NewWritableFS(uploadedFileDir),
 		},
 		Logger: errorLogger,
 	})
-	mux.Handle(uploadedFileRoute, http.StripPrefix(uploadedFileRoute, makeFileServer("./files")))
-	mux.Handle("/", makeFileServer("./public"))
+	mux.Handle(
+		uploadedFileRoute,
+		http.StripPrefix(uploadedFileRoute, makeFileServer(uploadedFileDir)),
+	)
+	mux.Handle("/", makeFileServer(publicFileDir))
 
 	wrappedMux := middlewares.ApplyMiddlewares(mux, []middlewares.Middleware{
 		middlewares.LoggingMiddleware(infoLogger),
 		middlewares.RecoveringMiddleware(errorLogger),
 	})
 
-	if err := http.ListenAndServe(":8080", wrappedMux); err != nil {
+	if err := http.ListenAndServe(serverAddress, wrappedMux); err != nil {
 		errorLogger.Fatal(err)
 	}
+}
+
+func getEnv(name string, defaultValue string) string {
+	value, ok := os.LookupEnv(name)
+	if !ok {
+		value = defaultValue
+	}
+
+	return value
 }
 
 func makeLogger(prefix string) *log.Logger {

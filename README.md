@@ -17,6 +17,12 @@ $ go install github.com/thewizardplusplus/go-upload-progress-backend@latest
 $ go-upload-progress-backend
 ```
 
+Environment variables:
+
+- `SERVER_ADDRESS` &mdash; server URI (default: `:8080`);
+- `PUBLIC_FILE_DIR` &mdash; path to the project's front-end (default: `./public`);
+- `UPLOADED_FILE_DIR` &mdash; path to uploaded files (default: `./files`).
+
 ## API Description
 
 API description:
