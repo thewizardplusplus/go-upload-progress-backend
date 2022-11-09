@@ -18,6 +18,7 @@ type FileUsecase interface {
 
 type Logger interface {
 	Print(values ...any)
+	Printf(format string, args ...any)
 }
 
 type FileHandler struct {
