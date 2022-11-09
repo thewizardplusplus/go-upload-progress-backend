@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"errors"
 	"io"
 	"net/http"
 
@@ -15,8 +16,13 @@ type FileUsecase interface {
 	DeleteFiles() error
 }
 
+type Logger interface {
+	Print(values ...any)
+}
+
 type FileHandler struct {
 	FileUsecase FileUsecase
+	Logger      Logger
 }
 
 func (h FileHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -33,20 +39,20 @@ func (h FileHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 	default:
 		errStatus := http.StatusMethodNotAllowed
-		http.Error(w, http.StatusText(errStatus), errStatus)
+		h.handleError(w, errors.New(http.StatusText(errStatus)), errStatus)
 	}
 }
 
 func (h FileHandler) GetFiles(w http.ResponseWriter, r *http.Request) {
 	fileInfos, err := h.FileUsecase.GetFiles()
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		h.handleError(w, err, http.StatusInternalServerError)
 		return
 	}
 
 	responseBytes, err := json.Marshal(fileInfos)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		h.handleError(w, err, http.StatusInternalServerError)
 		return
 	}
 
@@ -57,13 +63,13 @@ func (h FileHandler) GetFiles(w http.ResponseWriter, r *http.Request) {
 func (h FileHandler) SaveFile(w http.ResponseWriter, r *http.Request) {
 	file, fileHeader, err := r.FormFile("file")
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		h.handleError(w, err, http.StatusBadRequest)
 		return
 	}
 	defer file.Close()
 
 	if err := h.FileUsecase.SaveFile(file, fileHeader.Filename); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		h.handleError(w, err, http.StatusInternalServerError)
 		return
 	}
 
@@ -73,12 +79,12 @@ func (h FileHandler) SaveFile(w http.ResponseWriter, r *http.Request) {
 func (h FileHandler) DeleteFile(w http.ResponseWriter, r *http.Request) {
 	filename := r.FormValue("filename")
 	if filename == "" {
-		http.Error(w, "filename is required", http.StatusBadRequest)
+		h.handleError(w, errors.New("filename is required"), http.StatusBadRequest)
 		return
 	}
 
 	if err := h.FileUsecase.DeleteFile(filename); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		h.handleError(w, err, http.StatusInternalServerError)
 		return
 	}
 
@@ -87,9 +93,14 @@ func (h FileHandler) DeleteFile(w http.ResponseWriter, r *http.Request) {
 
 func (h FileHandler) DeleteFiles(w http.ResponseWriter, r *http.Request) {
 	if err := h.FileUsecase.DeleteFiles(); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		h.handleError(w, err, http.StatusInternalServerError)
 		return
 	}
 
 	w.WriteHeader(http.StatusNoContent)
+}
+
+func (h FileHandler) handleError(w http.ResponseWriter, err error, status int) {
+	h.Logger.Print(err)
+	http.Error(w, err.Error(), status)
 }
