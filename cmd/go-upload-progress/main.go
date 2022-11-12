@@ -14,6 +14,14 @@ import (
 	"github.com/thewizardplusplus/go-upload-progress/usecases"
 )
 
+//go:generate swag init --dir ../../ --generalInfo ./cmd/go-upload-progress/main.go --output ../../docs/ --outputTypes yaml --propertyStrategy pascalcase
+
+// @title go-upload-progress API
+// @version 1.0.0
+// @license.name MIT
+// @host localhost:8080
+// @basePath /api/v1
+
 const (
 	uploadedFileRoute = "/files/"
 	loggerFlags       = log.Ldate | log.Ltime | log.Lmicroseconds | log.Lmsgprefix

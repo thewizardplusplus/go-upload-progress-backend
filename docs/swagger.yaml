@@ -1,0 +1,86 @@
+basePath: /api/v1
+definitions:
+  entities.FileInfo:
+    properties:
+      ModTime:
+        format: date-time
+        type: string
+      Name:
+        type: string
+      Size:
+        description: in bytes
+        type: integer
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  license:
+    name: MIT
+  title: go-upload-progress API
+  version: 1.0.0
+paths:
+  /files/:
+    delete:
+      parameters:
+      - description: filename
+        in: query
+        minLength: 1
+        name: filename
+        type: string
+      produces:
+      - text/plain
+      responses:
+        "204":
+          description: No Content
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Delete a file or files
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/entities.FileInfo'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Get files
+    post:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: file
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - text/plain
+      responses:
+        "201":
+          description: Created
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Save a file
+swagger: "2.0"
