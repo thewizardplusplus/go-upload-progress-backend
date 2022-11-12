@@ -7,8 +7,8 @@ import (
 
 type FileInfo struct {
 	Name    string
-	Size    int64
-	ModTime time.Time
+	Size    int64     // in bytes
+	ModTime time.Time `format:"date-time"`
 }
 
 func NewFileInfo(fileInfo fs.FileInfo) FileInfo {

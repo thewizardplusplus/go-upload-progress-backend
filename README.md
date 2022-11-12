@@ -27,6 +27,7 @@ Environment variables:
 
 API description:
 
+- in the [Swagger](http://swagger.io/) format: [docs/swagger.yaml](docs/swagger.yaml);
 - in the format of a [Postman](https://www.postman.com/) collection: [docs/postman_collection.json](docs/postman_collection.json).
 
 ## License

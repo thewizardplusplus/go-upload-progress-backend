@@ -14,6 +14,12 @@ import (
 	"github.com/thewizardplusplus/go-upload-progress-backend/usecases"
 )
 
+// @title go-upload-progress-backend API
+// @version 1.3.0
+// @license.name MIT
+// @host localhost:8080
+// @basePath /api/v1
+
 const (
 	uploadedFileRoute = "/files/"
 	loggerFlags       = log.Ldate | log.Ltime | log.Lmicroseconds | log.Lmsgprefix
