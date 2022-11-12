@@ -1,5 +1,16 @@
 # Change Log
 
+## [v1.3.0](https://github.com/thewizardplusplus/go-upload-progress-backend/tree/v1.3.0) (2022-11-12)
+
+Add the [Docker](https://www.docker.com/) image.
+
+- Read the service parameters from environment variables
+- Add the [Docker](https://www.docker.com/) image:
+  - Add the [Docker Compose](https://docs.docker.com/compose/) configuration
+- Add the [Swagger](http://swagger.io/) documentation for the service API
+- Perform refactoring:
+  - Move the main code to a separate directory
+
 ## [v1.2.0](https://github.com/thewizardplusplus/go-upload-progress-backend/tree/v1.2.0) (2022-11-10)
 
 Implement logging.
