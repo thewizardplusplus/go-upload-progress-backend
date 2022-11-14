@@ -1,11 +1,13 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"math/rand"
 	"net/http"
 	"os"
+	"os/signal"
 	"time"
 
 	"github.com/thewizardplusplus/go-upload-progress/gateways/handlers"
@@ -50,14 +52,35 @@ func main() {
 	)
 	mux.Handle("/", makeFileServer(publicFileDir))
 
-	wrappedMux := middlewares.ApplyMiddlewares(mux, []middlewares.Middleware{
-		middlewares.LoggingMiddleware(infoLogger),
-		middlewares.RecoveringMiddleware(errorLogger),
-	})
+	server := http.Server{
+		Addr: serverAddress,
+		Handler: middlewares.ApplyMiddlewares(mux, []middlewares.Middleware{
+			middlewares.LoggingMiddleware(infoLogger),
+			middlewares.RecoveringMiddleware(errorLogger),
+		}),
+	}
 
-	if err := http.ListenAndServe(serverAddress, wrappedMux); err != nil {
+	// https://pkg.go.dev/net/http@go1.19.0#Server.Shutdown
+	//
+	// BSD 3-Clause "New" or "Revised" License
+	// Copyright (C) 2009 The Go Authors
+	waitingToShutdown := make(chan struct{})
+	go func() {
+		defer close(waitingToShutdown)
+
+		waitingToInterrupt := make(chan os.Signal, 1)
+		signal.Notify(waitingToInterrupt, os.Interrupt)
+		<-waitingToInterrupt
+
+		if err := server.Shutdown(context.Background()); err != nil {
+			errorLogger.Print(err)
+		}
+	}()
+
+	if err := server.ListenAndServe(); err != http.ErrServerClosed {
 		errorLogger.Fatal(err)
 	}
+	<-waitingToShutdown
 }
 
 func getEnv(name string, defaultValue string) string {
