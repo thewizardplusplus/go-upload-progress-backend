@@ -7,8 +7,7 @@ definitions:
         type: string
       Name:
         type: string
-      Size:
-        description: in bytes
+      SizeInB:
         type: integer
     type: object
 host: localhost:8080
