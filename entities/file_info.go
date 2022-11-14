@@ -6,15 +6,15 @@ import (
 )
 
 type FileInfo struct {
-	Name    string
-	Size    int64     // in bytes
-	ModTime time.Time `format:"date-time"`
+	Name             string
+	SizeInB          int64
+	ModificationTime time.Time `format:"date-time"`
 }
 
 func NewFileInfo(fileInfo fs.FileInfo) FileInfo {
 	return FileInfo{
-		Name:    fileInfo.Name(),
-		Size:    fileInfo.Size(),
-		ModTime: fileInfo.ModTime(),
+		Name:             fileInfo.Name(),
+		SizeInB:          fileInfo.Size(),
+		ModificationTime: fileInfo.ModTime(),
 	}
 }
