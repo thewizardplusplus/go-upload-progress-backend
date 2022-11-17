@@ -1,6 +1,7 @@
 package middlewares
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/thewizardplusplus/go-upload-progress/gateways/handlers"
@@ -12,6 +13,7 @@ func RecoveringMiddleware(logger handlers.Logger) Middleware {
 			defer func() {
 				if err := recover(); err != nil {
 					logger.Print(err)
+					http.Error(w, fmt.Sprint(err), http.StatusInternalServerError)
 				}
 			}()
 
