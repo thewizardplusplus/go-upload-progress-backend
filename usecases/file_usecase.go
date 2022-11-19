@@ -1,7 +1,7 @@
 package usecases
 
 import (
-	"encoding/hex"
+	"fmt"
 	"io"
 	"io/fs"
 	"math/rand"
@@ -140,7 +140,7 @@ func makeRandomFilename(filename string) (string, error) {
 
 	extension := filepath.Ext(filename)
 	randomFilename := strings.TrimSuffix(filename, extension) +
-		hex.EncodeToString(randomSuffixBytes) +
+		fmt.Sprintf("_%x", randomSuffixBytes) +
 		extension
 	return randomFilename, nil
 }
