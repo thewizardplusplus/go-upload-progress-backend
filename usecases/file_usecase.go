@@ -139,7 +139,7 @@ func makeRandomFilename(filename string) (string, error) {
 
 	extension := filepath.Ext(filename)
 	randomFilename := strings.TrimSuffix(filename, extension) +
-		hex.EncodeToString(randomSuffixBytes) +
+		"_" + hex.EncodeToString(randomSuffixBytes) +
 		extension
 	return randomFilename, nil
 }
