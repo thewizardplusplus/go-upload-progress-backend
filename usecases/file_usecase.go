@@ -1,5 +1,6 @@
 package usecases
 
+// nolint: lll
 import (
 	"fmt"
 	"io"
