@@ -64,10 +64,10 @@ func (writableFS WritableFS) joinWithBaseDir(filename string) string {
 }
 
 // This check is made for consistency with the implementation of `os.DirFS()`.
-//
-// BSD 3-Clause "New" or "Revised" License
-// Copyright (C) 2009 The Go Authors
 func checkFilename(filename string, operation string) error {
+	// BSD 3-Clause "New" or "Revised" License
+	// Copyright (C) 2009 The Go Authors
+
 	if !fs.ValidPath(filename) ||
 		(runtime.GOOS == "windows" && strings.ContainsAny(filename, `\:`)) {
 		return &fs.PathError{Op: operation, Path: filename, Err: fs.ErrInvalid}

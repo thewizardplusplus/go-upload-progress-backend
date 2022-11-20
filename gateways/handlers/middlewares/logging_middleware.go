@@ -16,7 +16,7 @@ type responseWriterWrapper struct {
 
 	statusCode       int
 	writtenByteCount int
-	isWritten        bool
+	isHeaderWritten  bool
 }
 
 func newResponseWriterWrapper(w http.ResponseWriter) *responseWriterWrapper {
@@ -24,26 +24,26 @@ func newResponseWriterWrapper(w http.ResponseWriter) *responseWriterWrapper {
 		ResponseWriter:   w,
 		statusCode:       defaultStatusCode,
 		writtenByteCount: 0,
-		isWritten:        false,
+		isHeaderWritten:  false,
 	}
 }
 
 func (w *responseWriterWrapper) WriteHeader(statusCode int) {
-	if w.isWritten {
+	if w.isHeaderWritten {
 		return
 	}
 
-	w.statusCode = statusCode
-	w.isWritten = true
-
 	w.ResponseWriter.WriteHeader(statusCode)
+
+	w.statusCode = statusCode
+	w.isHeaderWritten = true
 }
 
-func (w *responseWriterWrapper) Write(data []byte) (int, error) {
-	w.isWritten = true
+func (w *responseWriterWrapper) Write(data []byte) (writtenByteCount int, err error) {
+	writtenByteCount, err = w.ResponseWriter.Write(data)
 
-	writtenByteCount, err := w.ResponseWriter.Write(data)
 	w.writtenByteCount += writtenByteCount
+	w.isHeaderWritten = true
 
 	return writtenByteCount, err
 }

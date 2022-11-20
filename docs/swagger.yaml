@@ -20,6 +20,9 @@ info:
 paths:
   /files/:
     delete:
+      description: |-
+        If the filename is passed, the route will remove one file,
+        otherwise all files.
       parameters:
       - description: filename
         in: query
@@ -31,10 +34,6 @@ paths:
       responses:
         "204":
           description: No Content
-          schema:
-            type: string
-        "400":
-          description: Bad Request
           schema:
             type: string
         "500":

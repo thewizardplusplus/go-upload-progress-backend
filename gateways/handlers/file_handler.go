@@ -44,7 +44,7 @@ func (h FileHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// swag tool annotations:
+// # swag tool annotations
 //
 //	@router /files/ [GET]
 //	@summary Get files
@@ -68,7 +68,7 @@ func (h FileHandler) GetFiles(w http.ResponseWriter, r *http.Request) {
 	w.Write(responseBytes) // nolint: errcheck
 }
 
-// swag tool annotations:
+// # swag tool annotations
 //
 //	@router /files/ [POST]
 //	@summary Save a file
@@ -94,14 +94,18 @@ func (h FileHandler) SaveFile(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 }
 
-// swag tool annotations:
+// # swag tool annotations
+//
+// The described route is implemented via this method
+// and the `DeleteFiles()` method.
 //
 //	@router /files/ [DELETE]
 //	@summary Delete a file or files
+//	@description If the filename is passed, the route will remove one file,
+//	@description otherwise all files.
 //	@param filename query string false "filename" minLength(1)
 //	@produce plain
 //	@success 204 {string} string
-//	@failure 400 {string} string
 //	@failure 500 {string} string
 func (h FileHandler) DeleteFile(w http.ResponseWriter, r *http.Request) {
 	filename := r.FormValue("filename")
@@ -118,8 +122,10 @@ func (h FileHandler) DeleteFile(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNoContent)
 }
 
-// swag tool annotations: this method is used in the same route
-// as the `DeleteFile()` one; see its comment
+// # swag tool annotations
+//
+// This method is used in the same route
+// as the `DeleteFile()` method; see its comment.
 func (h FileHandler) DeleteFiles(w http.ResponseWriter, r *http.Request) {
 	if err := h.FileUsecase.DeleteFiles(); err != nil {
 		h.handleError(w, err, http.StatusInternalServerError)

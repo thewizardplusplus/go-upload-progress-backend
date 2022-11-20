@@ -60,7 +60,7 @@ func main() {
 		}),
 	}
 
-	// https://pkg.go.dev/net/http@go1.19.0#Server.Shutdown
+	// https://pkg.go.dev/net/http@go1.19.0#example-Server.Shutdown
 	//
 	// BSD 3-Clause "New" or "Revised" License
 	// Copyright (C) 2009 The Go Authors
