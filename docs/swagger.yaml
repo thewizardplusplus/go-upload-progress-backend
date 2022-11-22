@@ -66,12 +66,12 @@ paths:
         required: true
         type: file
       produces:
-      - text/plain
+      - application/json
       responses:
         "201":
           description: Created
           schema:
-            type: string
+            $ref: '#/definitions/entities.FileInfo'
         "400":
           description: Bad Request
           schema:

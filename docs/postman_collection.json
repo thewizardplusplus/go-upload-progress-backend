@@ -37,9 +37,8 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"const fileItem = pm.request.body.formdata.one(\"file\")",
-									"const fileName = fileItem.src.split(/[/\\\\]/).at(-1)",
-									"pm.globals.set(\"fileName\", fileName)"
+									"const fileInfo = pm.response.json()",
+									"pm.globals.set(\"fileName\", fileInfo.Name)"
 								],
 								"type": "text/javascript"
 							}
