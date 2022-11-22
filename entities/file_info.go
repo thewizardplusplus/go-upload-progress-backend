@@ -18,3 +18,12 @@ func NewFileInfo(fileInfo fs.FileInfo) FileInfo {
 		ModificationTime: fileInfo.ModTime(),
 	}
 }
+
+func NewFileInfoFromFile(file fs.File) (FileInfo, error) {
+	fileInfo, err := file.Stat()
+	if err != nil {
+		return FileInfo{}, err
+	}
+
+	return NewFileInfo(fileInfo), nil
+}

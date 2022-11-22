@@ -72,12 +72,7 @@ func (u FileUsecase) SaveFile(
 		return entities.FileInfo{}, err
 	}
 
-	savedFileInfo, err := savedFile.Stat()
-	if err != nil {
-		return entities.FileInfo{}, err
-	}
-
-	return entities.NewFileInfo(savedFileInfo), nil
+	return entities.NewFileInfoFromFile(savedFile)
 }
 
 func (u FileUsecase) DeleteFile(filename string) error {
