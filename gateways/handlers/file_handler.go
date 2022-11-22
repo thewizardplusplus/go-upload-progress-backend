@@ -58,14 +58,7 @@ func (h FileHandler) GetFiles(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	responseBytes, err := json.Marshal(fileInfos)
-	if err != nil {
-		h.handleError(w, err, http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(responseBytes) // nolint: errcheck
+	h.writeAsJSON(w, fileInfos, http.StatusOK)
 }
 
 // # swag tool annotations
@@ -92,15 +85,7 @@ func (h FileHandler) SaveFile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	responseBytes, err := json.Marshal(savedFileInfo)
-	if err != nil {
-		h.handleError(w, err, http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
-	w.Write(responseBytes) // nolint: errcheck
+	h.writeAsJSON(w, savedFileInfo, http.StatusCreated)
 }
 
 // # swag tool annotations
@@ -142,6 +127,18 @@ func (h FileHandler) DeleteFiles(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusNoContent)
+}
+
+func (h FileHandler) writeAsJSON(w http.ResponseWriter, data any, status int) {
+	responseBytes, err := json.Marshal(data)
+	if err != nil {
+		h.handleError(w, err, http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(status)
+	w.Write(responseBytes) // nolint: errcheck
 }
 
 func (h FileHandler) handleError(w http.ResponseWriter, err error, status int) {
