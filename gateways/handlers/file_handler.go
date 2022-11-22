@@ -11,7 +11,7 @@ import (
 
 type FileUsecase interface {
 	GetFiles() ([]entities.FileInfo, error)
-	SaveFile(file io.Reader, filename string) error
+	SaveFile(file io.Reader, filename string) (entities.FileInfo, error)
 	DeleteFile(filename string) error
 	DeleteFiles() error
 }
@@ -74,8 +74,8 @@ func (h FileHandler) GetFiles(w http.ResponseWriter, r *http.Request) {
 //	@summary Save a file
 //	@param file formData file true "file"
 //	@accept multipart/form-data
-//	@produce plain
-//	@success 201 {string} string
+//	@produce json
+//	@success 201 {object} entities.FileInfo
 //	@failure 400 {string} string
 //	@failure 500 {string} string
 func (h FileHandler) SaveFile(w http.ResponseWriter, r *http.Request) {
@@ -86,12 +86,21 @@ func (h FileHandler) SaveFile(w http.ResponseWriter, r *http.Request) {
 	}
 	defer file.Close()
 
-	if err := h.FileUsecase.SaveFile(file, fileHeader.Filename); err != nil {
+	savedFileInfo, err := h.FileUsecase.SaveFile(file, fileHeader.Filename)
+	if err != nil {
 		h.handleError(w, err, http.StatusInternalServerError)
 		return
 	}
 
+	responseBytes, err := json.Marshal(savedFileInfo)
+	if err != nil {
+		h.handleError(w, err, http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
+	w.Write(responseBytes) // nolint: errcheck
 }
 
 // # swag tool annotations

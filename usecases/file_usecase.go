@@ -52,23 +52,28 @@ func (u FileUsecase) GetFiles() ([]entities.FileInfo, error) {
 	return fileInfos, nil
 }
 
-func (u FileUsecase) SaveFile(file io.Reader, filename string) error {
+func (u FileUsecase) SaveFile(file io.Reader, filename string) (entities.FileInfo, error) {
 	uniqueFilename, err := u.makeUniqueFilename(filename)
 	if err != nil {
-		return err
+		return entities.FileInfo{}, err
 	}
 
 	savedFile, err := u.WritableFS.Create(uniqueFilename)
 	if err != nil {
-		return err
+		return entities.FileInfo{}, err
 	}
 	defer savedFile.Close()
 
 	if _, err := io.Copy(savedFile, file); err != nil {
-		return err
+		return entities.FileInfo{}, err
 	}
 
-	return nil
+	savedFileInfo, err := savedFile.Stat()
+	if err != nil {
+		return entities.FileInfo{}, err
+	}
+
+	return entities.NewFileInfo(savedFileInfo), nil
 }
 
 func (u FileUsecase) DeleteFile(filename string) error {
