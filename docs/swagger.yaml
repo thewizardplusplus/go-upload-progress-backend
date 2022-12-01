@@ -21,7 +21,7 @@ paths:
   /files/:
     delete:
       description: |-
-        If the filename is passed, the route will remove one file,
+        If the filename is passed, the route will delete one file,
         otherwise all files.
       parameters:
       - description: filename

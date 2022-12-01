@@ -95,7 +95,7 @@ func (h FileHandler) SaveFile(w http.ResponseWriter, r *http.Request) {
 //
 //	@router /files/ [DELETE]
 //	@summary Delete a file or files
-//	@description If the filename is passed, the route will remove one file,
+//	@description If the filename is passed, the route will delete one file,
 //	@description otherwise all files.
 //	@param filename query string false "filename" minLength(1)
 //	@produce plain
