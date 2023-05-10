@@ -4,12 +4,12 @@ services:
     build: .
     environment:
       SERVER_ADDRESS: ":8080"
-      PUBLIC_FILE_DIR: /var/www/go-upload-progress-backend
+      STATIC_FILE_DIR: /var/www/go-upload-progress-backend
       UPLOADED_FILE_DIR: /opt/go-upload-progress-backend/files
     ports:
       - 8080:8080
     volumes:
-      - ./public:/var/www/go-upload-progress-backend
+      - ./static:/var/www/go-upload-progress-backend
       - ./files:/opt/go-upload-progress-backend/files
 
   swagger:

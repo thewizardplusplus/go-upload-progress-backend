@@ -32,7 +32,7 @@ func main() {
 	rand.Seed(time.Now().UnixNano())
 
 	serverAddress := getEnv("SERVER_ADDRESS", ":8080")
-	publicFileDir := getEnv("PUBLIC_FILE_DIR", "./public")
+	staticFileDir := getEnv("STATIC_FILE_DIR", "./static")
 	uploadedFileDir := getEnv("UPLOADED_FILE_DIR", "./files")
 
 	infoLogger := makeLogger("INFO")
@@ -49,7 +49,7 @@ func main() {
 		uploadedFileRoute,
 		http.StripPrefix(uploadedFileRoute, makeFileServer(uploadedFileDir)),
 	)
-	mux.Handle("/", makeFileServer(publicFileDir))
+	mux.Handle("/", makeFileServer(staticFileDir))
 
 	server := http.Server{
 		Addr: serverAddress,
