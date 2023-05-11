@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strconv"
 
 	"github.com/thewizardplusplus/go-upload-progress-backend/gateways/handlers"
 	"github.com/thewizardplusplus/go-upload-progress-backend/gateways/handlers/middlewares"
@@ -23,18 +24,23 @@ import (
 // @basePath /api/v1
 
 const (
-	randomSuffixByteCount = 4
-	uploadedFileRoute     = "/files/"
-	loggerFlags           = log.Ldate | log.Ltime | log.Lmicroseconds | log.Lmsgprefix
+	uploadedFileRoute = "/files/"
+	loggerFlags       = log.Ldate | log.Ltime | log.Lmicroseconds | log.Lmsgprefix
 )
 
 func main() {
+	infoLogger := makeLogger("INFO")
+	errorLogger := makeLogger("ERROR")
+
 	serverAddress := getEnv("SERVER_ADDRESS", ":8080")
 	staticFileDir := getEnv("STATIC_FILE_DIR", "./static")
 	uploadedFileDir := getEnv("UPLOADED_FILE_DIR", "./files")
 
-	infoLogger := makeLogger("INFO")
-	errorLogger := makeLogger("ERROR")
+	randomSuffixByteCountAsString := getEnv("RANDOM_SUFFIX_BYTE_COUNT", "4")
+	randomSuffixByteCount, err := strconv.Atoi(randomSuffixByteCountAsString)
+	if err != nil {
+		errorLogger.Fatal(err)
+	}
 
 	mux := http.NewServeMux()
 	mux.Handle("/api/v1/files", handlers.FileHandler{

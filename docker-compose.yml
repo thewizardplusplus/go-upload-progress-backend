@@ -3,7 +3,6 @@ services:
   go-upload-progress-backend:
     build: .
     environment:
-      SERVER_ADDRESS: ":8080"
       STATIC_FILE_DIR: /var/www/go-upload-progress-backend
       UPLOADED_FILE_DIR: /opt/go-upload-progress-backend/files
     ports:
