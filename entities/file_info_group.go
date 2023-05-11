@@ -9,12 +9,12 @@ type FileInfoGroup []FileInfo
 func NewFileInfoGroup(files []fs.DirEntry) (FileInfoGroup, error) {
 	fileInfos := make(FileInfoGroup, 0, len(files))
 	for _, file := range files {
-		fileInfo, err := file.Info()
+		fileInfo, err := NewFileInfoFromDirEntry(file)
 		if err != nil {
 			return nil, err
 		}
 
-		fileInfos = append(fileInfos, NewFileInfo(fileInfo))
+		fileInfos = append(fileInfos, fileInfo)
 	}
 
 	return fileInfos, nil
