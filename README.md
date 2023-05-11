@@ -5,6 +5,49 @@
 
 Back-end of the service that implements a simple file manager with a display of file upload progress.
 
+The main challenge of the project was to write it without using third-party libraries.
+
+## Features
+
+- RESTful API:
+  - models:
+    - file info:
+      - fields:
+        - name;
+        - size (in bytes);
+        - modification time (in the [RFC 3339](https://www.rfc-editor.org/rfc/rfc3339.html) format with sub-second precision);
+      - operations:
+        - getting info about all uploaded files:
+          - sort the results by modification time in descending order;
+        - uploading a file:
+          - generate unique filenames;
+        - deleting a file by a filename;
+        - deleting all uploaded files;
+  - representing:
+    - in a JSON:
+      - payloads of responses;
+    - as a plain text:
+      - errors;
+- generating unique filenames:
+  - add a random suffix to a duplicated file name:
+    - use a sequence of random bytes as the suffix;
+    - format the suffix in base 16, lower-case, two characters per byte;
+- server:
+  - additional routing:
+    - serving static files;
+    - serving uploaded files;
+  - storing settings in environment variables;
+  - supporting graceful shutdown;
+  - logging:
+    - logging requests;
+    - logging errors;
+  - panics:
+    - recovering on panics;
+    - logging of panics;
+- distributing:
+  - [Docker](https://www.docker.com/) image;
+  - [Docker Compose](https://docs.docker.com/compose/) configuration.
+
 ## Installation
 
 ```
