@@ -14,7 +14,7 @@ import (
 type WritableFS interface {
 	fs.FS
 
-	Create(filename string) (writablefs.WritableFile, error)
+	CreateExcl(filename string) (writablefs.WritableFile, error)
 	Remove(filename string) error
 }
 
@@ -61,7 +61,7 @@ func (u FileUsecase) SaveFile(
 		return entities.FileInfo{}, err
 	}
 
-	savedFile, err := u.WritableFS.Create(uniqueFilename)
+	savedFile, err := u.WritableFS.CreateExcl(uniqueFilename)
 	if err != nil {
 		return entities.FileInfo{}, err
 	}

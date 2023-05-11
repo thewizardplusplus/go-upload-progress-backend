@@ -27,13 +27,19 @@ func NewWritableFS(baseDir string) WritableFS {
 	}
 }
 
-func (wfs WritableFS) Create(filename string) (WritableFile, error) {
+// Method `CreateExcl()` acts by analogy with function `os.Create()`,
+// but replaces flag `os.O_TRUNC` with `os.O_EXCL`.
+func (wfs WritableFS) CreateExcl(filename string) (WritableFile, error) {
 	// use the "open" operation, since the `os.Create()` uses it
 	if err := checkFilename(filename, "open"); err != nil {
 		return nil, err
 	}
 
-	file, err := os.Create(wfs.joinWithBaseDir(filename))
+	file, err := os.OpenFile(
+		wfs.joinWithBaseDir(filename),
+		os.O_RDWR|os.O_CREATE|os.O_EXCL,
+		0644,
+	)
 	if err != nil {
 		// restore the original filename instead of its joined version
 		updatePathInPathError(err, filename)
