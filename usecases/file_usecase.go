@@ -7,6 +7,7 @@ import (
 	"sort"
 
 	"github.com/thewizardplusplus/go-upload-progress-backend/entities"
+	fsutils "github.com/thewizardplusplus/go-upload-progress-backend/fs-utils"
 	writablefs "github.com/thewizardplusplus/go-upload-progress-backend/gateways/writable-fs"
 )
 
@@ -30,7 +31,7 @@ type FileUsecase struct {
 }
 
 func (u FileUsecase) GetFiles() ([]entities.FileInfo, error) {
-	files, err := u.readDirFiles()
+	files, err := u.readTopLevelFSFiles()
 	if err != nil {
 		return nil, err
 	}
@@ -57,7 +58,7 @@ func (u FileUsecase) SaveFile(
 	file io.Reader,
 	filename string,
 ) (entities.FileInfo, error) {
-	existingFiles, err := u.readDirFiles()
+	existingFiles, err := u.readTopLevelFSFiles()
 	if err != nil {
 		return entities.FileInfo{}, err
 	}
@@ -86,7 +87,7 @@ func (u FileUsecase) DeleteFile(filename string) error {
 }
 
 func (u FileUsecase) DeleteFiles() error {
-	files, err := u.readDirFiles()
+	files, err := u.readTopLevelFSFiles()
 	if err != nil {
 		return err
 	}
@@ -100,18 +101,6 @@ func (u FileUsecase) DeleteFiles() error {
 	return nil
 }
 
-func (u FileUsecase) readDirFiles() ([]fs.DirEntry, error) {
-	dirEntries, err := fs.ReadDir(u.WritableFS, ".")
-	if err != nil {
-		return nil, err
-	}
-
-	files := make([]fs.DirEntry, 0, len(dirEntries))
-	for _, dirEntry := range dirEntries {
-		if !dirEntry.IsDir() {
-			files = append(files, dirEntry)
-		}
-	}
-
-	return files, nil
+func (u FileUsecase) readTopLevelFSFiles() ([]fs.DirEntry, error) {
+	return fsutils.ReadDirFiles(u.WritableFS, ".")
 }
