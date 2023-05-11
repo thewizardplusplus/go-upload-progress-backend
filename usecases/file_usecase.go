@@ -30,20 +30,15 @@ type FileUsecase struct {
 	FilenameGenerator FilenameGenerator
 }
 
-func (u FileUsecase) GetFiles() ([]entities.FileInfo, error) {
+func (u FileUsecase) GetFiles() (entities.FileInfoGroup, error) {
 	files, err := u.readTopLevelFSFiles()
 	if err != nil {
 		return nil, err
 	}
 
-	fileInfos := make([]entities.FileInfo, 0, len(files))
-	for _, file := range files {
-		fileInfo, err := file.Info()
-		if err != nil {
-			return nil, err
-		}
-
-		fileInfos = append(fileInfos, entities.NewFileInfo(fileInfo))
+	fileInfos, err := entities.NewFileInfoGroup(files)
+	if err != nil {
+		return nil, err
 	}
 
 	sort.Slice(fileInfos, func(i int, j int) bool {

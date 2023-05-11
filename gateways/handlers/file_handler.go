@@ -10,7 +10,7 @@ import (
 )
 
 type FileUsecase interface {
-	GetFiles() ([]entities.FileInfo, error)
+	GetFiles() (entities.FileInfoGroup, error)
 	SaveFile(file io.Reader, filename string) (entities.FileInfo, error)
 	DeleteFile(filename string) error
 	DeleteFiles() error
