@@ -45,7 +45,7 @@ func main() {
 	mux := http.NewServeMux()
 	mux.Handle("/api/v1/files", handlers.FileHandler{
 		FileUsecase: usecases.FileUsecase{
-			WritableFS: writablefs.NewWritableFS(uploadedFileDir),
+			WritableFS: writablefs.NewDirFS(uploadedFileDir),
 			FilenameGenerator: generators.FilenameGenerator{
 				RandomSuffixByteCount: randomSuffixByteCount,
 			},

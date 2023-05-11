@@ -14,14 +14,14 @@ type WritableFile interface {
 	io.Writer
 }
 
-type WritableFS struct {
+type DirFS struct {
 	fs.FS
 
 	baseDir string
 }
 
-func NewWritableFS(baseDir string) WritableFS {
-	return WritableFS{
+func NewDirFS(baseDir string) DirFS {
+	return DirFS{
 		FS:      os.DirFS(baseDir),
 		baseDir: baseDir,
 	}
@@ -29,14 +29,14 @@ func NewWritableFS(baseDir string) WritableFS {
 
 // Method `CreateExcl()` acts by analogy with function `os.Create()`,
 // but replaces flag `os.O_TRUNC` with `os.O_EXCL`.
-func (wfs WritableFS) CreateExcl(path string) (WritableFile, error) {
+func (dfs DirFS) CreateExcl(path string) (WritableFile, error) {
 	// use the "open" operation, since the `os.Create()` uses it
 	if err := checkPath(path, "open"); err != nil {
 		return nil, err
 	}
 
 	file, err := os.OpenFile(
-		wfs.joinWithBaseDir(path),
+		dfs.joinWithBaseDir(path),
 		os.O_RDWR|os.O_CREATE|os.O_EXCL,
 		0644,
 	)
@@ -50,12 +50,12 @@ func (wfs WritableFS) CreateExcl(path string) (WritableFile, error) {
 	return file, nil
 }
 
-func (wfs WritableFS) Remove(path string) error {
+func (dfs DirFS) Remove(path string) error {
 	if err := checkPath(path, "remove"); err != nil {
 		return err
 	}
 
-	if err := os.Remove(wfs.joinWithBaseDir(path)); err != nil {
+	if err := os.Remove(dfs.joinWithBaseDir(path)); err != nil {
 		// restore the original path instead of its joined version
 		updatePathInPathError(err, path)
 
@@ -65,8 +65,8 @@ func (wfs WritableFS) Remove(path string) error {
 	return nil
 }
 
-func (wfs WritableFS) joinWithBaseDir(path string) string {
-	return filepath.Join(wfs.baseDir, path)
+func (dfs DirFS) joinWithBaseDir(path string) string {
+	return filepath.Join(dfs.baseDir, path)
 }
 
 // This check is made for consistency with the implementation of `os.DirFS()`.
