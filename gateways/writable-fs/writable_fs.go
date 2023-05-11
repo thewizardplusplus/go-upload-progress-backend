@@ -29,20 +29,20 @@ func NewWritableFS(baseDir string) WritableFS {
 
 // Method `CreateExcl()` acts by analogy with function `os.Create()`,
 // but replaces flag `os.O_TRUNC` with `os.O_EXCL`.
-func (wfs WritableFS) CreateExcl(filename string) (WritableFile, error) {
+func (wfs WritableFS) CreateExcl(path string) (WritableFile, error) {
 	// use the "open" operation, since the `os.Create()` uses it
-	if err := checkFilename(filename, "open"); err != nil {
+	if err := checkPath(path, "open"); err != nil {
 		return nil, err
 	}
 
 	file, err := os.OpenFile(
-		wfs.joinWithBaseDir(filename),
+		wfs.joinWithBaseDir(path),
 		os.O_RDWR|os.O_CREATE|os.O_EXCL,
 		0644,
 	)
 	if err != nil {
-		// restore the original filename instead of its joined version
-		updatePathInPathError(err, filename)
+		// restore the original path instead of its joined version
+		updatePathInPathError(err, path)
 
 		return nil, err
 	}
@@ -50,14 +50,14 @@ func (wfs WritableFS) CreateExcl(filename string) (WritableFile, error) {
 	return file, nil
 }
 
-func (wfs WritableFS) Remove(filename string) error {
-	if err := checkFilename(filename, "remove"); err != nil {
+func (wfs WritableFS) Remove(path string) error {
+	if err := checkPath(path, "remove"); err != nil {
 		return err
 	}
 
-	if err := os.Remove(wfs.joinWithBaseDir(filename)); err != nil {
-		// restore the original filename instead of its joined version
-		updatePathInPathError(err, filename)
+	if err := os.Remove(wfs.joinWithBaseDir(path)); err != nil {
+		// restore the original path instead of its joined version
+		updatePathInPathError(err, path)
 
 		return err
 	}
@@ -65,8 +65,8 @@ func (wfs WritableFS) Remove(filename string) error {
 	return nil
 }
 
-func (wfs WritableFS) joinWithBaseDir(filename string) string {
-	return filepath.Join(wfs.baseDir, filename)
+func (wfs WritableFS) joinWithBaseDir(path string) string {
+	return filepath.Join(wfs.baseDir, path)
 }
 
 // This check is made for consistency with the implementation of `os.DirFS()`.
@@ -75,10 +75,10 @@ func (wfs WritableFS) joinWithBaseDir(filename string) string {
 //
 //	BSD 3-Clause "New" or "Revised" License
 //	Copyright (C) 2009 The Go Authors
-func checkFilename(filename string, operation string) error {
-	if !fs.ValidPath(filename) ||
-		(runtime.GOOS == "windows" && strings.ContainsAny(filename, `\:`)) {
-		return &fs.PathError{Op: operation, Path: filename, Err: fs.ErrInvalid}
+func checkPath(path string, operation string) error {
+	if !fs.ValidPath(path) ||
+		(runtime.GOOS == "windows" && strings.ContainsAny(path, `\:`)) {
+		return &fs.PathError{Op: operation, Path: path, Err: fs.ErrInvalid}
 	}
 
 	return nil

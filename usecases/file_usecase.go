@@ -14,8 +14,8 @@ import (
 type WritableFS interface {
 	fs.FS
 
-	CreateExcl(filename string) (writablefs.WritableFile, error)
-	Remove(filename string) error
+	CreateExcl(path string) (writablefs.WritableFile, error)
+	Remove(path string) error
 }
 
 type FilenameGenerator interface {
