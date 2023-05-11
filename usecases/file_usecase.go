@@ -2,20 +2,12 @@ package usecases
 
 // nolint: lll
 import (
-	"fmt"
 	"io"
 	"io/fs"
-	"math/rand"
-	"path/filepath"
 	"sort"
-	"strings"
 
 	"github.com/thewizardplusplus/go-upload-progress-backend/entities"
 	writablefs "github.com/thewizardplusplus/go-upload-progress-backend/gateways/writable-fs"
-)
-
-const (
-	randomSuffixByteCount = 4
 )
 
 type WritableFS interface {
@@ -25,8 +17,16 @@ type WritableFS interface {
 	Remove(filename string) error
 }
 
+type FilenameGenerator interface {
+	GenerateUniqueFilename(
+		baseFilename string,
+		existingFiles []fs.DirEntry,
+	) (string, error)
+}
+
 type FileUsecase struct {
-	WritableFS WritableFS
+	WritableFS        WritableFS
+	FilenameGenerator FilenameGenerator
 }
 
 func (u FileUsecase) GetFiles() ([]entities.FileInfo, error) {
@@ -57,7 +57,13 @@ func (u FileUsecase) SaveFile(
 	file io.Reader,
 	filename string,
 ) (entities.FileInfo, error) {
-	uniqueFilename, err := u.makeUniqueFilename(filename)
+	existingFiles, err := u.readDirFiles()
+	if err != nil {
+		return entities.FileInfo{}, err
+	}
+
+	uniqueFilename, err :=
+		u.FilenameGenerator.GenerateUniqueFilename(filename, existingFiles)
 	if err != nil {
 		return entities.FileInfo{}, err
 	}
@@ -108,43 +114,4 @@ func (u FileUsecase) readDirFiles() ([]fs.DirEntry, error) {
 	}
 
 	return files, nil
-}
-
-func (u FileUsecase) makeUniqueFilename(filename string) (string, error) {
-	files, err := u.readDirFiles()
-	if err != nil {
-		return "", err
-	}
-
-	filenameSet := make(map[string]struct{})
-	for _, file := range files {
-		filenameSet[file.Name()] = struct{}{}
-	}
-
-	uniqueFilename := filename
-	for {
-		if _, exists := filenameSet[uniqueFilename]; !exists {
-			break
-		}
-
-		uniqueFilename, err = makeRandomFilename(filename)
-		if err != nil {
-			return "", err
-		}
-	}
-
-	return uniqueFilename, nil
-}
-
-func makeRandomFilename(filename string) (string, error) {
-	randomSuffixBytes := make([]byte, randomSuffixByteCount)
-	if _, err := rand.Read(randomSuffixBytes); err != nil {
-		return "", err
-	}
-
-	extension := filepath.Ext(filename)
-	randomFilename := strings.TrimSuffix(filename, extension) +
-		fmt.Sprintf("_%x", randomSuffixBytes) +
-		extension
-	return randomFilename, nil
 }

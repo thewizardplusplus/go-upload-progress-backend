@@ -15,6 +15,7 @@ import (
 	"github.com/thewizardplusplus/go-upload-progress-backend/gateways/handlers/middlewares"
 	writablefs "github.com/thewizardplusplus/go-upload-progress-backend/gateways/writable-fs"
 	"github.com/thewizardplusplus/go-upload-progress-backend/usecases"
+	"github.com/thewizardplusplus/go-upload-progress-backend/usecases/generators"
 )
 
 // @title go-upload-progress-backend API
@@ -24,8 +25,9 @@ import (
 // @basePath /api/v1
 
 const (
-	uploadedFileRoute = "/files/"
-	loggerFlags       = log.Ldate | log.Ltime | log.Lmicroseconds | log.Lmsgprefix
+	randomSuffixByteCount = 4
+	uploadedFileRoute     = "/files/"
+	loggerFlags           = log.Ldate | log.Ltime | log.Lmicroseconds | log.Lmsgprefix
 )
 
 func main() {
@@ -42,6 +44,9 @@ func main() {
 	mux.Handle("/api/v1/files", handlers.FileHandler{
 		FileUsecase: usecases.FileUsecase{
 			WritableFS: writablefs.NewWritableFS(uploadedFileDir),
+			FilenameGenerator: generators.FilenameGenerator{
+				RandomSuffixByteCount: randomSuffixByteCount,
+			},
 		},
 		Logger: errorLogger,
 	})
