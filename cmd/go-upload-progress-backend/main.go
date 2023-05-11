@@ -18,7 +18,7 @@ import (
 )
 
 // @title go-upload-progress-backend API
-// @version 1.3.0
+// @version 1.4.0
 // @license.name MIT
 // @host localhost:8080
 // @basePath /api/v1

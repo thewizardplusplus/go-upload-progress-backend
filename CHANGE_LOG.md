@@ -1,5 +1,35 @@
 # Change Log
 
+## [v1.4.0](https://github.com/thewizardplusplus/go-upload-progress-backend/tree/v1.4.0) (2023-05-12)
+
+Improve uploading files, unique filename generating, and logging, implement graceful server shutdown and perform refactoring.
+
+- Service API:
+  - Load a file list:
+    - Improve field naming in the `FileInfo` structure
+  - Upload a file:
+    - Fix the bug with uploading large files
+    - Make sure that the file will not be overwritten on uploading
+    - Return saved file information on file uploading
+    - generating unique filenames:
+      - Read random suffix byte count from the environment variable
+      - Use the `crypto/rand` package for unique filename generating
+      - Improve the format of a random suffix
+- Implement logging:
+  - Add the `middlewares.responseWriterWrapper` structure
+- Implement graceful server shutdown
+- Rename the `public` directory to `static`
+- Perform refactoring:
+  - Add the `entities.FileInfoGroup` type:
+    - Add the `entities.NewFileInfoFromDirEntry()` function
+    - Add the `entities.ByModificationTime` type
+  - Extract the `fsutils.ReadDirFiles()` function
+  - Extract the `usecases/generators.FilenameGenerator` structure
+  - Add the `handlers.FileHandler.writeAsJSON()` method
+  - of the `gateways/writablefs` package:
+    - Rename the `writablefs.WritableFS` structure to `DirFS`
+    - Improve the implementation of the `fs.FS` interface with the `writablefs.DirFS` structure
+
 ## [v1.3.0](https://github.com/thewizardplusplus/go-upload-progress-backend/tree/v1.3.0) (2022-11-12)
 
 Add the [Docker](https://www.docker.com/) image.

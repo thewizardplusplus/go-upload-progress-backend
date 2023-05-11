@@ -78,4 +78,4 @@ API description:
 
 The MIT License (MIT)
 
-Copyright &copy; 2022 thewizardplusplus
+Copyright &copy; 2022-2023 thewizardplusplus
