@@ -15,16 +15,23 @@ type WritableFile interface {
 }
 
 type DirFS struct {
-	fs.FS
-
-	baseDir string
+	innerDirFS fs.FS
+	baseDir    string
 }
 
 func NewDirFS(baseDir string) DirFS {
 	return DirFS{
-		FS:      os.DirFS(baseDir),
-		baseDir: baseDir,
+		innerDirFS: os.DirFS(baseDir),
+		baseDir:    baseDir,
 	}
+}
+
+func (dfs DirFS) Open(path string) (fs.File, error) {
+	return dfs.innerDirFS.Open(path)
+}
+
+func (dfs DirFS) Stat(path string) (fs.FileInfo, error) {
+	return dfs.innerDirFS.(fs.StatFS).Stat(path)
 }
 
 // Method `CreateExcl()` acts by analogy with function `os.Create()`,
