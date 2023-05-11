@@ -41,10 +41,7 @@ func (u FileUsecase) GetFiles() (entities.FileInfoGroup, error) {
 		return nil, err
 	}
 
-	sort.Slice(fileInfos, func(i int, j int) bool {
-		return fileInfos[i].ModificationTime.
-			After(fileInfos[j].ModificationTime) // reverse order
-	})
+	sort.Sort(sort.Reverse(entities.ByModificationTime(fileInfos)))
 
 	return fileInfos, nil
 }
