@@ -1,9 +1,9 @@
 package generators
 
 import (
+	"crypto/rand"
 	"fmt"
 	"io/fs"
-	"math/rand"
 	"path/filepath"
 	"strings"
 )

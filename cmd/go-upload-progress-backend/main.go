@@ -5,11 +5,9 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"math/rand"
 	"net/http"
 	"os"
 	"os/signal"
-	"time"
 
 	"github.com/thewizardplusplus/go-upload-progress-backend/gateways/handlers"
 	"github.com/thewizardplusplus/go-upload-progress-backend/gateways/handlers/middlewares"
@@ -31,8 +29,6 @@ const (
 )
 
 func main() {
-	rand.Seed(time.Now().UnixNano())
-
 	serverAddress := getEnv("SERVER_ADDRESS", ":8080")
 	staticFileDir := getEnv("STATIC_FILE_DIR", "./static")
 	uploadedFileDir := getEnv("UPLOADED_FILE_DIR", "./files")
