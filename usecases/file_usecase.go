@@ -7,8 +7,8 @@ import (
 	"sort"
 
 	"github.com/thewizardplusplus/go-upload-progress-backend/entities"
-	fsutils "github.com/thewizardplusplus/go-upload-progress-backend/fs-utils"
 	writablefs "github.com/thewizardplusplus/go-upload-progress-backend/gateways/writable-fs"
+	fsutils "github.com/thewizardplusplus/go-writable-fs/fs-utils"
 )
 
 type WritableFS interface {
@@ -94,5 +94,5 @@ func (u FileUsecase) DeleteFiles() error {
 }
 
 func (u FileUsecase) readTopLevelFSFiles() ([]fs.DirEntry, error) {
-	return fsutils.ReadDirFiles(u.WritableFS, ".")
+	return fsutils.ReadDirEntriesByKind(u.WritableFS, ".", fsutils.NonDirKind)
 }
