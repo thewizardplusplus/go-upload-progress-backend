@@ -1,20 +1,18 @@
 package writablefs
 
 import (
-	"io"
 	"io/fs"
 	"os"
 	"path/filepath"
 	"runtime"
 	"strings"
+
+	writablefs "github.com/thewizardplusplus/go-writable-fs"
 )
 
-type WritableFile interface {
-	fs.File
-	io.Writer
-}
-
 type DirFS struct {
+	writablefs.DummyFS
+
 	innerDirFS fs.FS
 	baseDir    string
 }
@@ -36,7 +34,7 @@ func (dfs DirFS) Stat(path string) (fs.FileInfo, error) {
 
 // Method `CreateExcl()` acts by analogy with function `os.Create()`,
 // but replaces flag `os.O_TRUNC` with `os.O_EXCL`.
-func (dfs DirFS) CreateExcl(path string) (WritableFile, error) {
+func (dfs DirFS) CreateExcl(path string) (writablefs.WritableFile, error) {
 	// use the "open" operation, since the `os.Create()` uses it
 	if err := checkPath(path, "open"); err != nil {
 		return nil, err

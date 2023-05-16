@@ -7,16 +7,9 @@ import (
 	"sort"
 
 	"github.com/thewizardplusplus/go-upload-progress-backend/entities"
-	writablefs "github.com/thewizardplusplus/go-upload-progress-backend/gateways/writable-fs"
+	writablefs "github.com/thewizardplusplus/go-writable-fs"
 	fsutils "github.com/thewizardplusplus/go-writable-fs/fs-utils"
 )
-
-type WritableFS interface {
-	fs.FS
-
-	CreateExcl(path string) (writablefs.WritableFile, error)
-	Remove(path string) error
-}
 
 type FilenameGenerator interface {
 	GenerateUniqueFilename(
@@ -26,7 +19,7 @@ type FilenameGenerator interface {
 }
 
 type FileUsecase struct {
-	WritableFS        WritableFS
+	WritableFS        writablefs.WritableFS
 	FilenameGenerator FilenameGenerator
 }
 
