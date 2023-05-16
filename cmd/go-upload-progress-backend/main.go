@@ -36,6 +36,12 @@ func main() {
 	staticFileDir := getEnv("STATIC_FILE_DIR", "./static")
 	uploadedFileDir := getEnv("UPLOADED_FILE_DIR", "./files")
 
+	maximumNumberOfTriesAsString := getEnv("MAXIMUM_NUMBER_OF_TRIES", "10000")
+	maximumNumberOfTries, err := strconv.Atoi(maximumNumberOfTriesAsString)
+	if err != nil {
+		errorLogger.Fatal(err)
+	}
+
 	randomSuffixByteCountAsString := getEnv("RANDOM_SUFFIX_BYTE_COUNT", "4")
 	randomSuffixByteCount, err := strconv.Atoi(randomSuffixByteCountAsString)
 	if err != nil {
@@ -47,6 +53,7 @@ func main() {
 		FileUsecase: usecases.FileUsecase{
 			WritableFS: writablefs.NewDirFS(uploadedFileDir),
 			FilenameGenerator: generators.FilenameGenerator{
+				MaximumNumberOfTries:  maximumNumberOfTries,
 				RandomSuffixByteCount: randomSuffixByteCount,
 			},
 		},

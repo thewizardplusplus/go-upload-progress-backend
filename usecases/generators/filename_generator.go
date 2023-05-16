@@ -2,6 +2,7 @@ package generators
 
 import (
 	"crypto/rand"
+	"errors"
 	"fmt"
 	"io/fs"
 	"path/filepath"
@@ -9,6 +10,7 @@ import (
 )
 
 type FilenameGenerator struct {
+	MaximumNumberOfTries  int
 	RandomSuffixByteCount int
 }
 
@@ -22,9 +24,13 @@ func (g FilenameGenerator) GenerateUniqueFilename(
 	}
 
 	uniqueFilename := baseFilename
-	for {
+	for try := 0; ; try++ {
 		if _, exists := existingFilenameSet[uniqueFilename]; !exists {
 			break
+		}
+
+		if try >= g.MaximumNumberOfTries {
+			return "", errors.New("the maximum number of tries is reached")
 		}
 
 		var err error

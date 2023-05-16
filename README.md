@@ -65,6 +65,7 @@ Environment variables:
 - `SERVER_ADDRESS` &mdash; server URI (default: `:8080`);
 - `STATIC_FILE_DIR` &mdash; path to static files (default: `./static`);
 - `UPLOADED_FILE_DIR` &mdash; path to uploaded files (default: `./files`);
+- `MAXIMUM_NUMBER_OF_TRIES` &mdash; maximum number of tries to generate a unique filename (default: `10000`);
 - `RANDOM_SUFFIX_BYTE_COUNT` &mdash; byte count in a random suffix of duplicate filenames (default: `4`).
 
 ## API Description
