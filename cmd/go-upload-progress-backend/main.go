@@ -12,9 +12,9 @@ import (
 
 	"github.com/thewizardplusplus/go-upload-progress-backend/gateways/handlers"
 	"github.com/thewizardplusplus/go-upload-progress-backend/gateways/handlers/middlewares"
-	writablefs "github.com/thewizardplusplus/go-upload-progress-backend/gateways/writable-fs"
 	"github.com/thewizardplusplus/go-upload-progress-backend/usecases"
 	"github.com/thewizardplusplus/go-upload-progress-backend/usecases/generators"
+	writablefs "github.com/thewizardplusplus/go-writable-fs"
 )
 
 // @title go-upload-progress-backend API
