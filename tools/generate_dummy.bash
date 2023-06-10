@@ -55,9 +55,27 @@ if [[ ! "$size_as_string" =~ $SIZE_PATTERN ]]; then
 	exit 1
 fi
 
-declare -r size_in_units="${BASH_REMATCH[1]}"
+declare -i size_unit_coefficient=1
 declare -r size_unit="${BASH_REMATCH[3]}"
-echo "size_in_units=$size_in_units"
-echo "size_unit=$size_unit"
+case "$size_unit" in
+	"KiB")
+		size_unit_coefficient=$(( 1024 ))
+		;;
+	"MiB")
+		size_unit_coefficient=$(( 1024 * 1024 ))
+		;;
+	"GiB")
+		size_unit_coefficient=$(( 1024 * 1024 * 1024 ))
+		;;
+esac
+echo "size_unit_coefficient=$size_unit_coefficient"
+
+declare -r size_in_units="${BASH_REMATCH[1]}"
+declare -r size_in_bytes="$(
+	bc <<< "$size_in_units * $size_unit_coefficient")"
+declare -r -i truncated_size_in_bytes="$(
+	bc <<< "scale = 0; ($size_in_bytes + 0.5) / 1")"
+echo "size_in_bytes=$size_in_bytes"
+echo "truncated_size_in_bytes=$truncated_size_in_bytes"
 
 echo "name_template=$name_template"
