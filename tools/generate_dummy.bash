@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+declare -r SIZE_PATTERN='^([[:digit:]]+(\.[[:digit:]]+)?)(([GMK]i)?B)$'
+
 declare -r script_name="$(basename "$0")"
 # it's necessary to separate the declaration and definition of the variable
 # so that the `declare` command doesn't hide an exit code of the defining expression
@@ -29,7 +31,7 @@ while [[ "$1" != "--" ]]; do
 			echo "Options:"
 			echo "  -h, --help                    - show the help message and exit;"
 			echo "  -s SIZE, --size SIZE          - a desired size" \
-				'of a generated file (should be in format "\d+(\.\d+)?([GMK]i)?B");'
+				"of a generated file (should be in format \"$SIZE_PATTERN\");"
 			echo "  -n TEMPLATE, --name TEMPLATE  - a template for a name" \
 				'of a generated file (may contain placeholder "${SIZE}", which' \
 				'will be replaced by a specified size; default: "dummy_${SIZE}.bin").'
@@ -48,6 +50,14 @@ while [[ "$1" != "--" ]]; do
 
 	shift
 done
+if [[ ! "$size_as_string" =~ $SIZE_PATTERN ]]; then
+	echo "error: incorrect size" 1>&2
+	exit 1
+fi
 
-echo "size_as_string=$size_as_string"
+declare -r size_in_units="${BASH_REMATCH[1]}"
+declare -r size_unit="${BASH_REMATCH[3]}"
+echo "size_in_units=$size_in_units"
+echo "size_unit=$size_unit"
+
 echo "name_template=$name_template"
