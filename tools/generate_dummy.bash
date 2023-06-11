@@ -84,4 +84,10 @@ echo "info: name - $name" 1>&2
 
 cat /dev/urandom \
 	| head --bytes $truncated_size_in_bytes \
+	| if command -v pv > /dev/null; then
+		pv --size $truncated_size_in_bytes
+	else
+		echo "warning: command pv isn't found, no progress is displayed" 1>&2
+		cat
+	fi \
 	> "$name"
