@@ -81,3 +81,7 @@ echo "info: size - $truncated_size_in_bytes B" 1>&2
 
 declare -r name="${name_template//$SIZE_PLACEHOLDER/$size_as_string}"
 echo "info: name - $name" 1>&2
+
+cat /dev/urandom \
+	| head --bytes $truncated_size_in_bytes \
+	> "$name"
