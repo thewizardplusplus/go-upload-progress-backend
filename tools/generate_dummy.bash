@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
 declare -r SIZE_PATTERN='^([[:digit:]]+(\.[[:digit:]]+)?)(([GMK]i)?B)$'
+declare -r SIZE_PLACEHOLDER='${SIZE}'
+declare -r DEFAULT_NAME_TEMPLATE="dummy_$SIZE_PLACEHOLDER.bin"
 
 declare -r script_name="$(basename "$0")"
 # it's necessary to separate the declaration and definition of the variable
@@ -19,7 +21,7 @@ if [[ $? != 0 ]]; then
 fi
 
 declare size_as_string=""
-declare name_template=""
+declare name_template="$DEFAULT_NAME_TEMPLATE"
 eval set -- "$options"
 while [[ "$1" != "--" ]]; do
 	case "$1" in
@@ -33,8 +35,9 @@ while [[ "$1" != "--" ]]; do
 			echo "  -s SIZE, --size SIZE          - a desired size" \
 				"of a generated file (should be in format \"$SIZE_PATTERN\");"
 			echo "  -n TEMPLATE, --name TEMPLATE  - a template for a name" \
-				'of a generated file (may contain placeholder "${SIZE}", which' \
-				'will be replaced by a specified size; default: "dummy_${SIZE}.bin").'
+				"of a generated file (may contain placeholder \"$SIZE_PLACEHOLDER\"," \
+				"which will be replaced by a specified size;" \
+				"default: \"$DEFAULT_NAME_TEMPLATE\")."
 
 			exit 0
 			;;
@@ -68,14 +71,13 @@ case "$size_unit" in
 		size_unit_coefficient=$(( 1024 * 1024 * 1024 ))
 		;;
 esac
-echo "size_unit_coefficient=$size_unit_coefficient"
 
 declare -r size_in_units="${BASH_REMATCH[1]}"
 declare -r size_in_bytes="$(
 	bc <<< "$size_in_units * $size_unit_coefficient")"
 declare -r -i truncated_size_in_bytes="$(
 	bc <<< "scale = 0; ($size_in_bytes + 0.5) / 1")"
-echo "size_in_bytes=$size_in_bytes"
-echo "truncated_size_in_bytes=$truncated_size_in_bytes"
+echo "info: size - $truncated_size_in_bytes B" 1>&2
 
-echo "name_template=$name_template"
+declare -r name="${name_template//$SIZE_PLACEHOLDER/$size_as_string}"
+echo "info: name - $name" 1>&2
