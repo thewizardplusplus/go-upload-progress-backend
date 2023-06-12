@@ -46,7 +46,9 @@ The main challenge of the project was to write it without using third-party libr
     - logging of panics;
 - distributing:
   - [Docker](https://www.docker.com/) image;
-  - [Docker Compose](https://docs.docker.com/compose/) configuration.
+  - [Docker Compose](https://docs.docker.com/compose/) configuration;
+- utilities:
+  - utility for generating a dummy file of a specified size, filled with random bytes.
 
 ## Installation
 
@@ -74,6 +76,10 @@ API description:
 
 - in the [Swagger](http://swagger.io/) format: [docs/swagger.yaml](docs/swagger.yaml);
 - in the format of a [Postman](https://www.postman.com/) collection: [docs/postman_collection.json](docs/postman_collection.json).
+
+## Utilities
+
+- [generate-dummy](tools/generate-dummy) &mdash; the utility for generating a dummy file of a specified size, filled with random bytes
 
 ## License
 

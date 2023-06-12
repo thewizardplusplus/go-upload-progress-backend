@@ -73,7 +73,8 @@ while [[ "$1" != "--" ]]; do
 			echo "Options:"
 			echo "  -h, --help                    - show the help message and exit;"
 			echo "  -s SIZE, --size SIZE          - a desired size" \
-				"of a generated file (should be in format \"$SIZE_PATTERN\");"
+				"of a generated file (should be in format \"$SIZE_PATTERN\"," \
+				'e.g.: "5B", "12.3KiB", "2.35MiB", "42.6GiB");'
 			echo "  -n TEMPLATE, --name TEMPLATE  - a template for a name" \
 				"of a generated file (may contain placeholder \"$SIZE_PLACEHOLDER\"," \
 				"which will be replaced by a specified size;" \
