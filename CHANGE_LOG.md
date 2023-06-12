@@ -1,5 +1,27 @@
 # Change Log
 
+## [v1.5.0](https://github.com/thewizardplusplus/go-upload-progress-backend/tree/v1.5.0) (2023-06-12)
+
+Use the [github.com/thewizardplusplus/go-writable-fs](https://github.com/thewizardplusplus/go-writable-fs) package and add the utility for generating a dummy file of a specified size, filled with random bytes.
+
+- Service API:
+  - Upload a file:
+    - Restrict a number of tries to generate a unique filename
+- Utilities:
+  - Add the utility for generating a dummy file of a specified size, filled with random bytes:
+    - Parse the options
+    - Parse a file size
+    - Calculate a file size in bytes
+    - Generate a filename
+    - Generate a file
+    - Display progress
+- Perform refactoring:
+  - Use the [github.com/thewizardplusplus/go-writable-fs](https://github.com/thewizardplusplus/go-writable-fs) package:
+    - Use the `fsutils.ReadDirEntriesByKind()` function
+    - Use the `writablefs.WritableFS` interface
+    - Use the `writablefs.DirFS` structure
+  - Add the `main.getIntEnv()` function
+
 ## [v1.4.0](https://github.com/thewizardplusplus/go-upload-progress-backend/tree/v1.4.0) (2023-05-12)
 
 Improve uploading files, unique filename generating, and logging, implement graceful server shutdown and perform refactoring.

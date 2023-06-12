@@ -32,6 +32,7 @@ The main challenge of the project was to write it without using third-party libr
   - add a random suffix to a duplicated file name:
     - use a sequence of random bytes as the suffix;
     - format the suffix in base 16, lower-case, two characters per byte;
+  - restrict a number of tries to generate a unique filename;
 - server:
   - additional routing:
     - serving static files;
