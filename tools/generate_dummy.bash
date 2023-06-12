@@ -38,6 +38,12 @@ function log() {
 		1>&2
 }
 
+function has_command() {
+	declare -r command="$1"
+
+	command -v "$command" > /dev/null
+}
+
 declare -r script_name="$(basename "$0")"
 # it's necessary to separate the declaration and definition of the variable
 # so that the `declare` command doesn't hide an exit code of the defining expression
@@ -118,7 +124,7 @@ log INFO "name: $name"
 
 cat /dev/urandom \
 	| head --bytes $truncated_size_in_bytes \
-	| if command -v pv > /dev/null; then
+	| if has_command pv; then
 		pv --size $truncated_size_in_bytes
 	else
 		log WARNING "command \"pv\" isn't found, no progress is displayed"
